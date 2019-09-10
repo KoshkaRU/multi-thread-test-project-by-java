@@ -13,10 +13,6 @@ class ATest {
 
         AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(info.bhrigu.spring.test.myConfig.class);
 
-        A testA = context.getBean(A.class);
-
-        Assertions.assertThrows(Exception.class, () -> {testA.myB.method1();});
-
         context.close();
 
     } // END:
