@@ -10,8 +10,6 @@ public class MainApp {
 
     public static long time = 0;
 
-    public static Object dummy = new Object();
-
     public static Set<Integer> numbers = new HashSet<Integer>();
 
     static AnnotationConfigApplicationContext context;
