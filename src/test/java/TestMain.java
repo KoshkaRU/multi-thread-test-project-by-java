@@ -1,8 +1,12 @@
-class Main{
+import org.junit.jupiter.api.Test;
 
-    public static void main(String[] args) {
+class Main {
 
-        System.out.println("Hellow world!");
+    @Test
+    void test1() {
 
-    }
-}
+        return;
+
+    } //END: test1()
+
+} //END: class Main
