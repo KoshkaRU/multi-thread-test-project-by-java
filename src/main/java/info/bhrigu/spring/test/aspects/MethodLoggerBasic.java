@@ -14,7 +14,7 @@ import java.util.Date;
 @Aspect
 public class MethodLoggerBasic {
 
-    @Pointcut("execution(* info.bhrigu.spring.test.beans.B.*(..))")
+    @Pointcut("execution(* info.bhrigu.spring.test.beans.SumProcessor.*(..))")
     void around_work() {};
 
     @Around("around_work()")

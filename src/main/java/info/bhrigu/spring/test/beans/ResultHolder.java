@@ -31,9 +31,9 @@ public class ResultHolder {
 
         System.out.println("Starting form number set...");
 
-        if (MainApp.numbers.size() != 10000000) {
+        if (MainApp.numbers.size() != 10000) {
 
-            for (int i = 1; i <= 1000000; i++) {
+            for (int i = 1; i <= 10000; i++) {
 
                 MainApp.numbers.add(Integer.valueOf(i));
 

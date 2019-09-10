@@ -75,7 +75,9 @@ public class MainApp {
 
         try {
 
-            if (false) {
+            boolean isByThread = false; // flag
+
+            if (isByThread) {
 
                 thread1.start();
 
