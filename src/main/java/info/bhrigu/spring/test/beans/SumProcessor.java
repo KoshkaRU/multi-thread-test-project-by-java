@@ -15,7 +15,8 @@ public class SumProcessor {
     private static int global_id = 0;
     final public int processor_id;
     private final ArrayList<Long> numbers;
-    public Long processor_sum = 0l;
+
+    private Long processor_sum = 0l;
 
     @Autowired
     private final ResultHolder sumHoldder = null;
@@ -28,7 +29,7 @@ public class SumProcessor {
 
     } // END: constructor
 
-    public void work() throws Exception {
+    public Long work() throws Exception {
 
         long t1 = new java.util.Date().getTime();
 
@@ -36,16 +37,20 @@ public class SumProcessor {
 
         try {
 
-            if (numbers == null) throw new Exception("Не удалось получить массив чисел.");
+            if (numbers == null) throw new Exception("Cannot receive array of numbers.");
+
             for (i = 0; i < numbers.size(); i++) {
 
                 Long o = null;
 
                 try {
+
                     o = numbers.get(i);
+
                     if (o == null) throw new Exception("no number");
+
                 } catch (Exception e) {
-                    throw new Exception("Ошибка извлечения числа из массива: " + e);
+                    throw new Exception("Error during of a number extraction from numbers: " + e);
                 }
 
                 processor_sum += o;
@@ -55,7 +60,9 @@ public class SumProcessor {
             if (sumHoldder == null) throw new Exception("No sum holder");
 
             synchronized (sumHoldder) {
+
                 sumHoldder.setSum(sumHoldder.getSum() + processor_sum);
+
             }
 
             long t2 = new java.util.Date().getTime();
@@ -68,16 +75,16 @@ public class SumProcessor {
 
         }
 
-        return;
+        return processor_sum;
 
-    } //END: method1
+    } //END: work()
 
     @PostConstruct
     public void init() {
 
         System.out.println("Initializated B: " + this);
 
-    } //END: method2
+    } //END: init()
 
     @PreDestroy
     public void destroy() {

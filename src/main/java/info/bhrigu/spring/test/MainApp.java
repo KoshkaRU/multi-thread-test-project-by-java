@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -19,8 +19,8 @@ public class MainApp {
     static AnnotationConfigApplicationContext context;
 
     public static long time = 0l;
-    public final static int SIZE = 40_000_000;
-    public final static int DIVIDE_FACTOR = 4;
+    public final static int SIZE = 6_000_000;
+    public final static int DIVIDE_FACTOR = 6;
     public static ArrayList<Long>[] numbers = new ArrayList[DIVIDE_FACTOR];
 
     public static ArrayList<SumProcessor> processors = new ArrayList<>();
@@ -58,6 +58,8 @@ public class MainApp {
         thread_process thread2 = new thread_process();
         thread_process thread3 = new thread_process();
         thread_process thread4 = new thread_process();
+        thread_process thread5 = new thread_process();
+        thread_process thread6 = new thread_process();
 
         ResultHolder a;
 
@@ -75,19 +77,23 @@ public class MainApp {
                 System.out.println("Multithread compute");
                 System.out.println("-------------------");
                 ExecutorService pool = new ThreadPoolExecutor(
-                        4,
-                        4,
+                        DIVIDE_FACTOR,
+                        DIVIDE_FACTOR,
                         0,
                         TimeUnit.MICROSECONDS,
-                        new ArrayBlockingQueue<>(4)
+                        new ArrayBlockingQueue<>(DIVIDE_FACTOR)
                 );
 
-                List<Callable<Boolean>> tasks = new ArrayList();
+                pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(DIVIDE_FACTOR);
+
+                List<Callable<Long>> tasks = new ArrayList();
 
                 tasks.add(thread1);
                 tasks.add(thread2);
                 tasks.add(thread3);
                 tasks.add(thread4);
+                tasks.add(thread5);
+                tasks.add(thread6);
                 pool.invokeAll(tasks);
 
                 pool.shutdown();
@@ -99,11 +105,15 @@ public class MainApp {
                 thread2.start();
                 thread3.start();
                 thread4.start();
+                thread5.start();
+                thread6.start();
 
                 thread1.join();
                 thread2.join();
                 thread3.join();
                 thread4.join();
+                thread5.join();
+                thread6.join();
 
             }
 

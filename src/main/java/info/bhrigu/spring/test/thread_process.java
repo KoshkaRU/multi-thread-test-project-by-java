@@ -4,9 +4,11 @@ import java.util.concurrent.Callable;
 
 import info.bhrigu.spring.test.beans.SumProcessor;
 
-public class thread_process extends Thread implements Callable<Boolean>, Runnable {
+public class thread_process extends Thread implements Callable<Long>, Runnable {
 
     static int index = 0;
+
+    private Long sum = 0l;
 
     @Override
     public void run() {
@@ -17,30 +19,32 @@ public class thread_process extends Thread implements Callable<Boolean>, Runnabl
 
             if (next == null) {
 
-                System.out.println("Нет процессора");
+                System.out.println("There is not processor in the list.");
 
                 System.exit(-1);
 
             }
 
-            next.work();
-
-            System.out.println("Thread " + this + " complete! Result is " + next.processor_sum);
+            this.sum = next.work();
 
         } catch (Exception e) {
 
             System.out.println("Error in thread " + this + ": " + e);
+
+        } finally {
+
+            System.out.println("Thread "+index + ": " + this + " complete the work");
 
         }
 
     } //END: run()
 
     @Override
-    public Boolean call() throws Exception {
+    public Long call() throws Exception {
 
         run();
 
-        return true;
+        return sum;
 
     } //END: call()
 
