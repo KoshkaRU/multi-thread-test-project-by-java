@@ -1,20 +1,20 @@
 package info.bhrigu.spring.test.beans;
 
-import info.bhrigu.spring.test.MainApp;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicLong;
 
-import static info.bhrigu.spring.test.MainApp.SIZE;
+import javax.annotation.PostConstruct;
+
+import info.bhrigu.spring.test.MainApp;
 
 @Component
 @Scope("singleton")
+
 public class ResultHolder {
+
+    public static AtomicLong total_time = new AtomicLong(0);
 
     public static Long sum = 0l;
 

@@ -2,10 +2,11 @@ package info.bhrigu.spring.test.beans;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
-import java.util.ArrayList;
+
 
 public class SumProcessor {
 
@@ -26,6 +27,8 @@ public class SumProcessor {
     } // END: constructor
 
     public void work() throws Exception {
+
+        long t1 = new java.util.Date().getTime();
 
         int i = 0;
 
@@ -48,6 +51,10 @@ public class SumProcessor {
             synchronized (sumHoldder) {
                 sumHoldder.setSum(sumHoldder.getSum() + processor_sum);
             }
+
+            long t2 = new java.util.Date().getTime();
+
+            this.sumHoldder.total_time.addAndGet(t2 - t1);
 
         } catch (Exception e) {
 
@@ -75,7 +82,12 @@ public class SumProcessor {
 
     @Override
     public String toString() {
-        return "Processor " + processor_id +
-                " contain " + numbers.size() + " numbers from " + numbers.get(0) + " to " + numbers.get(numbers.size() - 1);
-    }
-}
+        return "" +
+                "Processor " + processor_id + " " +
+                "contain " + numbers.size() + " " +
+                "numbers from " + numbers.get(0) +
+                " to " + numbers.get(numbers.size() - 1);
+
+    } //END: toString()
+
+} //END: class SumProcessor
