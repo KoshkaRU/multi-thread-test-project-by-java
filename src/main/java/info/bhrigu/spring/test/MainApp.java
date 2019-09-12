@@ -3,73 +3,48 @@ package info.bhrigu.spring.test;
 import info.bhrigu.spring.test.beans.SumProcessor;
 import org.springframework.context.annotation.*;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class MainApp {
 
     public static long time = 0;
 
-    public static Set<Integer> numbers = new HashSet<Integer>();
+    public static int SIZE = 1_000_000;
+
+    public static Vector<Integer> numbers = new Vector<>();
 
     static AnnotationConfigApplicationContext context;
+
+    public static Set<SumProcessor> processors = new HashSet<>();
 
     public static void main(String[] args) throws Exception {
 
         context = new AnnotationConfigApplicationContext(myConfig.class);
 
-        SumProcessor sumProcessor1 = context.getBean(SumProcessor.class, 1, 2500);
-        SumProcessor sumProcessor2 = context.getBean(SumProcessor.class, 2501, 5000);
-        SumProcessor sumProcessor3 = context.getBean(SumProcessor.class, 5001, 7500);
-        SumProcessor sumProcessor4 = context.getBean(SumProcessor.class, 7501, 10000);
+        int DIVIDE_FACTOR = 4;
 
-        Thread thread1 = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    sumProcessor1.work();
-                } catch (Exception e) {
-                    System.out.println("Error: " + e);
-                    System.exit(-1);
-                }
-            }
-        };
+        int part_size = SIZE / DIVIDE_FACTOR;
 
-        Thread thread2 = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    sumProcessor2.work();
-                } catch (Exception e) {
-                    System.out.println("Error: " + e);
-                    System.exit(-1);
-                }
-            }
-        };
+        for (int i = 0; i < DIVIDE_FACTOR; i++) {
 
-        Thread thread3 = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    sumProcessor3.work();
-                } catch (Exception e) {
-                    System.out.println("Error: " + e);
-                    System.exit(-1);
-                }
-            }
-        };
+            int start_i =  (i * part_size) + (1);
 
-        Thread thread4 = new Thread() {
-            @Override
-            public void run() {
-                try {
-                    sumProcessor4.work();
-                } catch (Exception e) {
-                    System.out.println("Error: " + e);
-                    System.exit(-1);
-                }
-            }
-        };
+            int end_i = (i + 1) * part_size;
+
+            System.out.println("Start: " +
+                    start_i +
+                    ", End: " +
+                    end_i);
+
+            processors.add(context.getBean(SumProcessor.class, start_i, end_i));
+
+        }
+
+        thread_process thread1 = new thread_process();
+        thread_process thread2 = new thread_process();
+        thread_process thread3 = new thread_process();
+        thread_process thread4 = new thread_process();
 
         try {
 
@@ -77,23 +52,34 @@ public class MainApp {
 
             if (isByThread) {
 
-                thread1.start();
+                ExecutorService pool = new ThreadPoolExecutor(
+                        4,
+                        4,
+                        0,
+                        TimeUnit.MICROSECONDS,
+                        new ArrayBlockingQueue<Runnable>(4)
+                );
 
-                thread2.start();
+                List<Callable<Boolean>> tasks = new ArrayList();
 
-                thread3.start();
+                tasks.add(thread1);
+                tasks.add(thread2);
+                tasks.add(thread3);
+                tasks.add(thread4);
 
-                thread4.start();
+                List<Future<Boolean>> futures = pool.invokeAll(tasks);
+
+                pool.shutdown();
 
             } else {
 
-                sumProcessor1.work();
+                for (SumProcessor p: MainApp.processors
+                     ) {
 
-                sumProcessor2.work();
+                    p.work();
 
-                sumProcessor3.work();
+                }
 
-                sumProcessor4.work();
 
             }
 
@@ -110,3 +96,24 @@ public class MainApp {
     } // END: main
 
 } // END: class MainApp
+
+class thread_process extends Thread implements Callable<Boolean> {
+
+    @Override
+    public void run() {
+        try {
+            SumProcessor next = MainApp.processors.iterator().next();
+            next.work();
+            MainApp.processors.remove(next);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+    }
+
+    @Override
+    public Boolean call() throws Exception {
+        run();
+        return true;
+    }
+
+};

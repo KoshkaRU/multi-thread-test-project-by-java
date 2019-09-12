@@ -10,6 +10,8 @@ import javax.annotation.PreDestroy;
 import java.util.HashSet;
 import java.util.Set;
 
+import static info.bhrigu.spring.test.MainApp.SIZE;
+
 @Component
 @Scope("singleton")
 public class ResultHolder {
@@ -31,9 +33,10 @@ public class ResultHolder {
 
         System.out.println("Starting form number set...");
 
-        if (MainApp.numbers.size() != 10000) {
 
-            for (int i = 1; i <= 10000; i++) {
+        if (MainApp.numbers.size() == 0) {
+
+            for (int i = 1; i <= SIZE; i++) {
 
                 MainApp.numbers.add(Integer.valueOf(i));
 

@@ -41,27 +41,21 @@ public class SumProcessor {
 
         for (int i = start; i <= stop; i++) {
 
-            System.out.println("processing " + i);
+            //System.out.println(Thread.currentThread().getName() + " processing " + i);
 
-            synchronized ((MainApp.numbers)) {
+            try {
 
                 Integer o = null;
 
-                try {
-
-                    o = MainApp.numbers.iterator().next();
-
-                    MainApp.numbers.remove(o);
-
-                } catch (Exception e) {
-
-                    throw new Exception("Error of numbers: " + e);
-
-                }
+                o = MainApp.numbers.get(i - 1);
 
                 total_sum += o;
 
-            } // END: synchronized
+            } catch (Exception e) {
+
+                throw new Exception("Error of numbers: " + e);
+
+            }
 
         } // END: for
 
