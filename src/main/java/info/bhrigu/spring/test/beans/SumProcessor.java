@@ -7,13 +7,15 @@ import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+import info.bhrigu.spring.test.MainApp;
+
 
 public class SumProcessor {
 
     private static int global_id = 0;
     final public int processor_id;
     private final ArrayList<Long> numbers;
-    private Long processor_sum = 0l;
+    public Long processor_sum = 0l;
 
     @Autowired
     private final ResultHolder sumHoldder = null;
@@ -36,14 +38,18 @@ public class SumProcessor {
 
             if (numbers == null) throw new Exception("Не удалось получить массив чисел.");
             for (i = 0; i < numbers.size(); i++) {
+
                 Long o = null;
+
                 try {
                     o = numbers.get(i);
                     if (o == null) throw new Exception("no number");
                 } catch (Exception e) {
                     throw new Exception("Ошибка извлечения числа из массива: " + e);
                 }
+
                 processor_sum += o;
+
             } // END: for
 
             if (sumHoldder == null) throw new Exception("No sum holder");

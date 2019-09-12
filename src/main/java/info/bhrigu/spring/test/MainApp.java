@@ -46,7 +46,9 @@ public class MainApp {
         // create 4 processors (bean)
 
         for (i = 0; i < DIVIDE_FACTOR; i++) {
+
             SumProcessor bean = context.getBean(SumProcessor.class, numbers[i]);
+
             if (bean == null) throw new Exception("Error recive bean SumProcessor.class");
             processors.add(bean);
         }
@@ -89,6 +91,7 @@ public class MainApp {
                 pool.invokeAll(tasks);
 
                 pool.shutdown();
+                pool.awaitTermination(60, TimeUnit.SECONDS);
 
             } else {
 
@@ -115,6 +118,7 @@ public class MainApp {
             System.out.println("-------------");
 
             ArrayList<Long> numbers_tolal = new ArrayList<>();
+
             for (i = 0; i < SIZE; i++) {
                 numbers_tolal.add((i + 1l));
             }
@@ -140,4 +144,5 @@ public class MainApp {
         context.close();
 
     } // END: main
+
 } // END: class MainApp

@@ -2,7 +2,6 @@ package info.bhrigu.spring.test;
 
 import java.util.concurrent.Callable;
 
-import info.bhrigu.spring.test.beans.ResultHolder;
 import info.bhrigu.spring.test.beans.SumProcessor;
 
 public class thread_process extends Thread implements Callable<Boolean>, Runnable {
@@ -26,7 +25,7 @@ public class thread_process extends Thread implements Callable<Boolean>, Runnabl
 
             next.work();
 
-            System.out.println("Thread " + this + " complete!");
+            System.out.println("Thread " + this + " complete! Result is " + next.processor_sum);
 
         } catch (Exception e) {
 
@@ -38,12 +37,13 @@ public class thread_process extends Thread implements Callable<Boolean>, Runnabl
 
     @Override
     public Boolean call() throws Exception {
+
         run();
 
-        System.out.println(this.toString() + " complete task.");
         return true;
-    }
 
-};
+    } //END: call()
+
+}; //END: class thread_process
 
 
