@@ -1,10 +1,10 @@
 package info.bhrigu.spring.test;
 
 import info.bhrigu.spring.test.aspects.MethodLoggerBasic;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import info.bhrigu.spring.test.beans.SumProcessor;
+import org.springframework.context.annotation.*;
+
+import java.util.ArrayList;
 
 @Configuration
 @EnableAspectJAutoProxy
@@ -15,6 +15,14 @@ public class myConfig {
     MethodLoggerBasic getlogger() {
 
         return new MethodLoggerBasic();
+
+    }
+
+    @Scope("prototype")
+    @Bean
+    SumProcessor getProcessor(ArrayList<Long> numbers) {
+
+        return new SumProcessor(numbers);
 
     }
 

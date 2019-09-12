@@ -1,5 +1,6 @@
 package info.bhrigu.spring.test;
 
+import info.bhrigu.spring.test.beans.ResultHolder;
 import info.bhrigu.spring.test.beans.SumProcessor;
 import org.springframework.context.annotation.*;
 
@@ -10,78 +11,116 @@ public class MainApp {
 
     public static long time = 0;
 
-    public static int SIZE = 1_000_000;
+    public static int SIZE = 10_000_000;
 
-    public static Vector<Integer> numbers = new Vector<>();
+    public final static int DIVIDE_FACTOR = 4;
+
+    public static ArrayList<Long>[] numbers = new ArrayList[DIVIDE_FACTOR];
 
     static AnnotationConfigApplicationContext context;
 
-    public static Set<SumProcessor> processors = new HashSet<>();
+    public static ArrayList<SumProcessor> processors = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
 
         context = new AnnotationConfigApplicationContext(myConfig.class);
 
-        int DIVIDE_FACTOR = 4;
+        // form 4 datasets
 
         int part_size = SIZE / DIVIDE_FACTOR;
 
-        for (int i = 0; i < DIVIDE_FACTOR; i++) {
+        int i;
+        int j;
 
-            int start_i =  (i * part_size) + (1);
+        for (j = 0; j < DIVIDE_FACTOR; j++) {
 
-            int end_i = (i + 1) * part_size;
+            numbers[j] = new ArrayList<>();
 
-            System.out.println("Start: " +
-                    start_i +
-                    ", End: " +
-                    end_i);
+            for (i = 0; i < (int) part_size; i++) {
 
-            processors.add(context.getBean(SumProcessor.class, start_i, end_i));
+                numbers[j].add(((j * part_size) + i + 1l));
+
+            }
 
         }
+
+        // create 4 processors (bean)
+
+        for (i = 0; i < DIVIDE_FACTOR; i++) {
+
+            SumProcessor bean = context.getBean(SumProcessor.class, numbers[i]);
+
+            if (bean == null) throw new Exception("Не удалось достать SumProcessor.class");
+
+            processors.add(bean);
+
+        }
+
+        // creates 4 threads fro processors
 
         thread_process thread1 = new thread_process();
         thread_process thread2 = new thread_process();
         thread_process thread3 = new thread_process();
         thread_process thread4 = new thread_process();
 
+        ResultHolder a = context.getBean(ResultHolder.class);
+
         try {
 
-            boolean isByThread = false; // flag
+            boolean isByThread = true; // flag
 
-            if (isByThread) {
+            time = 0;
 
-                ExecutorService pool = new ThreadPoolExecutor(
-                        4,
-                        4,
-                        0,
-                        TimeUnit.MICROSECONDS,
-                        new ArrayBlockingQueue<Runnable>(4)
-                );
+            System.out.println("--------------------");
+            System.out.println("Многопоточный расчёт");
+            System.out.println("--------------------");
 
-                List<Callable<Boolean>> tasks = new ArrayList();
+            ExecutorService pool = new ThreadPoolExecutor(
+                    4,
+                    4,
+                    0,
+                    TimeUnit.MICROSECONDS,
+                    new ArrayBlockingQueue<Runnable>(4)
+            );
 
-                tasks.add(thread1);
-                tasks.add(thread2);
-                tasks.add(thread3);
-                tasks.add(thread4);
+            List<Callable<Boolean>> tasks = new ArrayList();
 
-                List<Future<Boolean>> futures = pool.invokeAll(tasks);
+            tasks.add(thread1);
+            tasks.add(thread2);
+            tasks.add(thread3);
+            tasks.add(thread4);
 
-                pool.shutdown();
+            List<Future<Boolean>> futures = pool.invokeAll(tasks);
 
-            } else {
+            pool.shutdown();
 
-                for (SumProcessor p: MainApp.processors
-                     ) {
+            System.out.println("Time is: " + time);
 
-                    p.work();
+            a.printSum();
 
-                }
+            a.clearSum();
 
+            time = 0;
+
+            System.out.println("---------------------------");
+            System.out.println("Одиночный поток расчитывает");
+            System.out.println("---------------------------");
+
+            ArrayList<Long> numbers_tolal = new ArrayList<>();
+
+            for (i = 0; i < SIZE; i++) {
+
+                numbers_tolal.add((i + 1l));
 
             }
+
+            SumProcessor sumProcessor = context.getBean(SumProcessor.class, numbers_tolal);
+
+            sumProcessor.work();
+
+            System.out.println("Time is: " + time);
+
+            a.printSum();
 
         } catch (Exception e) {
 
@@ -91,29 +130,6 @@ public class MainApp {
 
         context.close();
 
-        System.out.println("Time is: " + time);
-
     } // END: main
 
 } // END: class MainApp
-
-class thread_process extends Thread implements Callable<Boolean> {
-
-    @Override
-    public void run() {
-        try {
-            SumProcessor next = MainApp.processors.iterator().next();
-            next.work();
-            MainApp.processors.remove(next);
-        } catch (Exception e) {
-            System.out.println("Error: " + e);
-        }
-    }
-
-    @Override
-    public Boolean call() throws Exception {
-        run();
-        return true;
-    }
-
-};

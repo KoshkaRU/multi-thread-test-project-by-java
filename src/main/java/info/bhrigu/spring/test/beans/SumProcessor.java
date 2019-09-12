@@ -1,67 +1,79 @@
 package info.bhrigu.spring.test.beans;
 
-import info.bhrigu.spring.test.MainApp;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
 
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import java.util.ArrayList;
 
-@Component
-@Scope("prototype")
 public class SumProcessor {
 
+    static int global_id = 0;
+
+    public int processor_id = 0;
 
     @Autowired
     private final ResultHolder sumHoldder = null;
 
-    private final int start;
-
-    private final int stop;
+    private final ArrayList<Long> numbers;
 
     /**
      * Constructor
-     *
-     * @param start Start number
-     * @param stop  End number
      */
-    public SumProcessor(int start, int stop) {
+    public SumProcessor(ArrayList<Long> numbers) {
 
-        this.start = start;
+        this.numbers = numbers;
 
-        this.stop = stop;
+        processor_id = ++global_id;
 
     } // END: constructor
 
-    int total_sum = 0;
+    private Long processor_sum = 0l;
 
     public void work() throws Exception {
 
-        for (int i = start; i <= stop; i++) {
+        int i = 0;
 
-            //System.out.println(Thread.currentThread().getName() + " processing " + i);
+        try {
 
-            try {
+            if (numbers == null) throw new Exception("Не удалось получить массив чисел.");
 
-                Integer o = null;
+            for (i = 0; i < numbers.size(); i++) {
 
-                o = MainApp.numbers.get(i - 1);
+                Long o = null;
 
-                total_sum += o;
+                try {
 
-            } catch (Exception e) {
+                    o = numbers.get(i);
 
-                throw new Exception("Error of numbers: " + e);
+                    if (o == null) throw new Exception("no number");
+
+                } catch (Exception e) {
+
+                    throw new Exception("Ошибка извлечения числа из массива: " + e);
+
+                }
+
+                processor_sum += o;
+
+            } // END: for
+
+
+            if (sumHoldder == null) throw new Exception("No sum holder");
+
+            synchronized (sumHoldder) {
+
+                sumHoldder.setSum(sumHoldder.getSum() + processor_sum);
 
             }
 
-        } // END: for
 
-        synchronized (sumHoldder) {
+        } catch (Exception e) {
 
-            sumHoldder.setSum(sumHoldder.getSum() + total_sum);
+            System.out.println("Ошибка work(" +
+                    i +
+                    ") " + e.toString());
 
         }
 
@@ -72,15 +84,20 @@ public class SumProcessor {
     @PostConstruct
     public void init() {
 
-        System.out.println("Initializated B: " + this.toString());
+        System.out.println("Initializated B: " + this);
 
     } //END: method2
 
     @PreDestroy
     public void destroy() {
 
-        System.out.println("Destroy B: " + this.toString());
+        System.out.println("Destroy B: " + this);
 
     } //END: method3
 
+    @Override
+    public String toString() {
+        return "Processor " + processor_id +
+                " contain " + numbers.size() + " contain numbers from " + numbers.get(0) + " to " + numbers.get(numbers.size() - 1);
+    }
 }

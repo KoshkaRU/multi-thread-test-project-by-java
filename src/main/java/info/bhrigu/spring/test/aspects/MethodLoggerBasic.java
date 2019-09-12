@@ -11,13 +11,11 @@ import java.util.Date;
 @Aspect
 public class MethodLoggerBasic {
 
-    @Pointcut("execution(* info.bhrigu.spring.test.beans.SumProcessor.*(..))")
+    @Pointcut("execution(* info.bhrigu.spring.test.beans.SumProcessor.work(..))")
     void around_work() {};
 
     @Around("around_work()")
     public void logMethodName(ProceedingJoinPoint joinPoint) throws Throwable {
-
-        System.out.println("Method name is:"+joinPoint.getSignature());
 
         long starttime = new Date().getTime();
 
