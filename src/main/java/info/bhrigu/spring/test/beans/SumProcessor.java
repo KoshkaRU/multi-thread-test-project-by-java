@@ -9,18 +9,14 @@ import java.util.ArrayList;
 
 public class SumProcessor {
 
-    static int global_id = 0;
-
-    public int processor_id = 0;
+    private static int global_id = 0;
+    final public int processor_id;
+    private final ArrayList<Long> numbers;
+    private Long processor_sum = 0l;
 
     @Autowired
     private final ResultHolder sumHoldder = null;
 
-    private final ArrayList<Long> numbers;
-
-    /**
-     * Constructor
-     */
     public SumProcessor(ArrayList<Long> numbers) {
 
         this.numbers = numbers;
@@ -29,8 +25,6 @@ public class SumProcessor {
 
     } // END: constructor
 
-    private Long processor_sum = 0l;
-
     public void work() throws Exception {
 
         int i = 0;
@@ -38,42 +32,26 @@ public class SumProcessor {
         try {
 
             if (numbers == null) throw new Exception("Не удалось получить массив чисел.");
-
             for (i = 0; i < numbers.size(); i++) {
-
                 Long o = null;
-
                 try {
-
                     o = numbers.get(i);
-
                     if (o == null) throw new Exception("no number");
-
                 } catch (Exception e) {
-
                     throw new Exception("Ошибка извлечения числа из массива: " + e);
-
                 }
-
                 processor_sum += o;
-
             } // END: for
-
 
             if (sumHoldder == null) throw new Exception("No sum holder");
 
             synchronized (sumHoldder) {
-
                 sumHoldder.setSum(sumHoldder.getSum() + processor_sum);
-
             }
-
 
         } catch (Exception e) {
 
-            System.out.println("Ошибка work(" +
-                    i +
-                    ") " + e.toString());
+            System.out.println("Work() error (" + i + ") " + e);
 
         }
 
@@ -98,6 +76,6 @@ public class SumProcessor {
     @Override
     public String toString() {
         return "Processor " + processor_id +
-                " contain " + numbers.size() + " contain numbers from " + numbers.get(0) + " to " + numbers.get(numbers.size() - 1);
+                " contain " + numbers.size() + " numbers from " + numbers.get(0) + " to " + numbers.get(numbers.size() - 1);
     }
 }

@@ -18,15 +18,10 @@ public class MethodLoggerBasic {
     public void logMethodName(ProceedingJoinPoint joinPoint) throws Throwable {
 
         long starttime = new Date().getTime();
-
         joinPoint.proceed();
-
         long endtime = new Date().getTime();
-
         long time = endtime - starttime;
-
         MainApp.time += time;
 
     } // END:
-
 } // ENDC

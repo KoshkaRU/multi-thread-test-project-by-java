@@ -35,13 +35,6 @@ public class ResultHolder {
 
     } // END: setSum()
 
-
-    void print_result() {
-
-        System.out.println("Destroy A");
-
-    }
-
     public void printSum() {
         System.out.println("Sum is " + sum);
     }
@@ -50,4 +43,4 @@ public class ResultHolder {
         sum = 0l;
     }
 
-} // ENDC: A
+} // ENDC: ResultHolder

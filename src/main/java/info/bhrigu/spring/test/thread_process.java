@@ -23,8 +23,6 @@ public class thread_process extends Thread implements Callable<Boolean> {
 
             } ;
 
-            System.out.println("В потоке извлечен процессор " + next);
-
             next.work();
 
         } catch (Exception e) {
