@@ -7,8 +7,6 @@ import java.util.ArrayList;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
-import info.bhrigu.spring.test.MainApp;
-
 
 public class SumProcessor {
 
@@ -31,7 +29,7 @@ public class SumProcessor {
 
     public Long work() throws Exception {
 
-        long t1 = new java.util.Date().getTime();
+        long t1 = System.currentTimeMillis();
 
         int i = 0;
 
@@ -50,7 +48,13 @@ public class SumProcessor {
                     if (o == null) throw new Exception("no number");
 
                 } catch (Exception e) {
-                    throw new Exception("Error during of a number extraction from numbers: " + e);
+
+                    final String s = "" +
+                            "Error during of a number extraction from numbers: " +
+                            e;
+
+                    throw new Exception(s);
+
                 }
 
                 processor_sum += o;
@@ -65,7 +69,7 @@ public class SumProcessor {
 
             }
 
-            long t2 = new java.util.Date().getTime();
+            long t2 = System.currentTimeMillis();
 
             this.sumHoldder.total_time.addAndGet(t2 - t1);
 

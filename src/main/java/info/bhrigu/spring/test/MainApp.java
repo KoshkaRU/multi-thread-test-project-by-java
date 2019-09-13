@@ -19,7 +19,7 @@ public class MainApp {
     static AnnotationConfigApplicationContext context;
 
     public static long time = 0l;
-    public final static int SIZE = 6_000_000;
+    public final static int SIZE = 12_000_000;
     public final static int DIVIDE_FACTOR = 6;
     public static ArrayList<Long>[] numbers = new ArrayList[DIVIDE_FACTOR];
 
@@ -53,7 +53,7 @@ public class MainApp {
             processors.add(bean);
         }
 
-        // creates 4 threads fro processors
+        // creates 6 threads fro processors
         thread_process thread1 = new thread_process();
         thread_process thread2 = new thread_process();
         thread_process thread3 = new thread_process();
@@ -65,7 +65,7 @@ public class MainApp {
 
         a = context.getBean(ResultHolder.class);
 
-        try {
+
 
             boolean isByPool = true; // flag
 
@@ -76,15 +76,20 @@ public class MainApp {
                 System.out.println("-------------------");
                 System.out.println("Multithread compute");
                 System.out.println("-------------------");
-                ExecutorService pool = new ThreadPoolExecutor(
+
+                ExecutorService pool;
+
+                /*
+                 pool = new ThreadPoolExecutor(
                         DIVIDE_FACTOR,
                         DIVIDE_FACTOR,
                         0,
                         TimeUnit.MICROSECONDS,
                         new ArrayBlockingQueue<>(DIVIDE_FACTOR)
                 );
+                */
 
-                pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(DIVIDE_FACTOR);
+                pool = (ThreadPoolExecutor) Executors.newCachedThreadPool();
 
                 List<Callable<Long>> tasks = new ArrayList();
 
@@ -144,6 +149,8 @@ public class MainApp {
 
             System.out.println("total time is " + a.total_time);
             System.out.println("basic time is " + MainApp.time);
+
+        try {
 
         } catch (Exception e) {
 

@@ -33,7 +33,7 @@ public class thread_process extends Thread implements Callable<Long>, Runnable {
 
         } finally {
 
-            System.out.println("Thread "+index + ": " + this + " complete the work");
+            //System.out.println("Thread "+index + ": " + this + " complete the work");
 
         }
 

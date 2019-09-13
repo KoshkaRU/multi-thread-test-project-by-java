@@ -18,9 +18,9 @@ public class MethodLoggerBasic {
     @Around("around_work()")
     public void logMethodName(ProceedingJoinPoint joinPoint) throws Throwable {
 
-        long starttime = new Date().getTime();
+        long starttime = System.currentTimeMillis();
         joinPoint.proceed();
-        long endtime = new Date().getTime();
+        long endtime = System.currentTimeMillis();
         long time = endtime - starttime;
         MainApp.time += time;
 
